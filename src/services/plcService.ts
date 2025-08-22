@@ -112,7 +112,7 @@ class PlcService {
   }
 
   async validateConnection(connection: PlcConnection): Promise<ApiResponse<any>> {
-    return this.makeRequest('/api/plc/validate-connection', {
+    return this.makeRequest(API_CONFIG.ENDPOINTS.PLC.VALIDATE_CONNECTION, {
       method: 'POST',
       body: JSON.stringify(connection),
     });
