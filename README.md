@@ -1,189 +1,164 @@
-# 🏭 PLC Testing Interface
+# PLC S7-1200 Interface
 
-Una interfaz web moderna y funcional para probar la comunicación con PLCs Siemens a través del backend PLC.
+Interfaz web para monitorear variables del PLC Siemens S7-1200 en tiempo real.
 
-## ✨ Características
+## 🚀 Características
 
-- **🔌 Conexión PLC**: Establece y gestiona conexiones a PLCs Siemens
-- **📊 Lectura de Variables**: Lee todas las variables o variables específicas del PLC
-- **📈 Monitoreo de Estado**: Monitorea el estado de todas las conexiones activas
-- **💚 Verificación de Salud**: Verifica el estado del servicio backend
-- **🔄 Auto-refresh**: Actualización automática de datos con intervalos configurables
-- **📱 Responsive**: Interfaz adaptada para dispositivos móviles y de escritorio
+- **Conexión PLC**: Establece conexión con PLCs S7-1200 usando el protocolo S7
+- **Variables Predefinidas**: Monitorea 8 variables específicas del sistema solar/batería
+- **Monitoreo en Tiempo Real**: Lectura automática de variables con auto-refresh configurable
+- **Estado de Conexiones**: Visualización del estado de todas las conexiones PLC
+- **Health Check**: Monitoreo del estado del servicio y métricas del sistema
+
+## 🔌 Variables del PLC S7-1200
+
+El sistema está configurado para leer las siguientes variables:
+
+| Variable | Descripción | Dirección | Tipo | Unidad |
+|----------|-------------|-----------|------|---------|
+| **FechaHora** | Estado de fecha y hora | P#DB51.DBX164.0 | BOOL | - |
+| **VB** | Voltaje de batería | %DB1.DBD24 | REAL | V |
+| **CB** | Corriente de batería | %DB1.DBW28 | INT | A |
+| **SW** | Solar Watt | %DB1.DBW50 | INT | W |
+| **ET** | Energía total | %DB1.DBW16 | INT | J |
+| **PT** | Potencia total | %DB1.DBW18 | INT | W |
+| **VS** | Voltaje solar | %DB1.DBD36 | REAL | V |
+| **CS** | Corriente solar | %DB1.DBW34 | INT | A |
+
+## 🛠️ Tecnologías
+
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Backend**: NestJS, Node.js, TypeScript
+- **Comunicación PLC**: Protocolo S7 usando node-snap7
+- **Arquitectura**: API REST con comunicación en tiempo real
+
+## 📋 Requisitos
+
+- Node.js 18+ 
+- PLC Siemens S7-1200 accesible por red
+- Configuración correcta de las variables en el PLC
 
 ## 🚀 Instalación
 
-### Prerrequisitos
+### Backend
 
-- Node.js 18+ 
-- npm o yarn
-- Backend PLC ejecutándose en `http://localhost:3000`
+```bash
+cd backend-plc
+npm install
+npm run build
+npm run start:dev
+```
 
-### Pasos de Instalación
+### Frontend
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone <tu-repositorio>
-   cd frontend-plc
-   ```
+```bash
+cd frontend-plc
+npm install
+npm run dev
+```
 
-2. **Instalar dependencias**
-   ```bash
-   npm install
-   ```
+## ⚙️ Configuración
 
-3. **Ejecutar en modo desarrollo**
-   ```bash
-   npm run dev
-   ```
+### Variables de Entorno Backend
 
-4. **Abrir en el navegador**
-   ```
-   http://localhost:3001
-   ```
+```env
+PORT=3000
+CORS_ORIGIN=http://localhost:3001
+PLC_CONNECTION_TIMEOUT=5000
+PLC_MAX_RECONNECTION_ATTEMPTS=3
+PLC_DEFAULT_RACK=0
+PLC_DEFAULT_SLOT=1
+```
 
-## 🎯 Uso
-
-### 1. Conexión al PLC
-
-1. Ve a la pestaña **"Conexión PLC"**
-2. Ingresa la IP del PLC (ej: `192.168.1.100`)
-3. Configura el rack y slot si es necesario
-4. Haz clic en **"Probar Conexión"**
-5. Una vez conectado, verás un banner verde confirmando la conexión
-
-### 2. Lectura de Variables
-
-1. Ve a la pestaña **"Lectura Variables"**
-2. Selecciona las variables que deseas monitorear
-3. Elige entre:
-   - **"Leer Todas las Variables"**: Lee todas las variables disponibles
-   - **"Leer Variables Seleccionadas"**: Lee solo las variables marcadas
-4. Activa **"Auto-refresh"** para actualización automática
-5. Los datos se muestran en una tabla organizada
-
-### 3. Monitoreo de Estado
-
-1. Ve a la pestaña **"Estado Conexiones"**
-2. Visualiza el estado de todas las conexiones PLC activas
-3. Cada conexión muestra:
-   - Estado de conexión (Conectado/Desconectado)
-   - IP, Rack y Slot
-   - Última actividad
-   - Contador de errores
-   - Barra de salud de conexión
-
-### 4. Verificación de Servicio
-
-1. Ve a la pestaña **"Estado Servicio"**
-2. Verifica que el backend esté funcionando correctamente
-3. Monitorea:
-   - Estado del servicio
-   - Versión
-   - Tiempo de actividad
-   - Información del sistema
-
-## 🔧 Configuración
-
-### Variables de Entorno
-
-Crea un archivo `.env.local` en la raíz del proyecto:
+### Variables de Entorno Frontend
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXT_PUBLIC_REFRESH_INTERVAL=5000
 ```
 
-### Personalización de Estilos
+## 🔧 Uso
 
-Los estilos están basados en Tailwind CSS. Puedes personalizar:
+### 1. Conexión al PLC
 
-- Colores en `tailwind.config.js`
-- Estilos globales en `src/app/globals.css`
-- Componentes individuales en `src/app/components/`
+1. Ve a la pestaña "Conexión PLC S7-1200"
+2. Ingresa la IP del PLC
+3. Configura Rack y Slot (por defecto: 0, 1)
+4. Haz clic en "Conectar al PLC"
 
-## 📱 Endpoints del Backend
+### 2. Monitoreo de Variables
 
-La interfaz consume los siguientes endpoints:
+1. Una vez conectado, ve a "Variables PLC"
+2. Las variables se cargan automáticamente
+3. Usa "Leer Todas las Variables" para actualizar valores
+4. Activa "Auto-refresh" para monitoreo continuo
 
-| Endpoint | Método | Descripción |
-|----------|--------|-------------|
-| `/plc/connect` | POST | Conectar a un PLC |
-| `/plc/disconnect` | POST | Desconectar de un PLC |
-| `/plc/read-all` | POST | Leer todas las variables |
-| `/plc/read-specific` | POST | Leer variables específicas |
-| `/plc/variables/info` | GET | Obtener información de variables |
-| `/plc/connections/status` | GET | Estado de conexiones |
-| `/plc/health` | GET | Estado del servicio |
+### 3. Estado de Conexiones
 
-## 🎨 Tecnologías Utilizadas
+- Visualiza todas las conexiones activas
+- Monitorea el estado de cada PLC
+- Desconecta PLCs individualmente
 
-- **Frontend**: Next.js 15 + React 19
-- **Estilos**: Tailwind CSS 4
-- **Lenguaje**: TypeScript
-- **Estado**: React Hooks
-- **HTTP**: Fetch API nativa
+### 4. Health Check
 
-## 🚨 Solución de Problemas
+- Verifica el estado del servicio
+- Monitorea métricas del sistema
+- Revisa recomendaciones del sistema
 
-### Error de Conexión al Backend
+## 📡 API Endpoints
 
-1. Verifica que el backend esté ejecutándose en el puerto 3000
-2. Comprueba que no haya problemas de firewall
-3. Revisa los logs del backend
+### Conexión PLC
+- `POST /plc/connect` - Conectar a PLC
+- `POST /plc/disconnect` - Desconectar de PLC
+- `POST /plc/validate-connection` - Validar conexión
 
-### Variables No Se Muestran
+### Variables
+- `POST /plc/read-all` - Leer todas las variables
+- `POST /plc/read-specific` - Leer variables específicas
+- `GET /plc/variables/info` - Información de variables disponibles
 
-1. Asegúrate de estar conectado al PLC
-2. Verifica que las variables existan en el PLC
-3. Revisa la configuración de rack y slot
+### Estado del Sistema
+- `GET /plc/connections/status` - Estado de conexiones
+- `GET /plc/health` - Health check del servicio
+- `GET /plc/health/detailed` - Health check detallado
 
-### Interfaz No Responde
+## 🔍 Troubleshooting
 
-1. Verifica la consola del navegador para errores
-2. Asegúrate de que todas las dependencias estén instaladas
-3. Reinicia el servidor de desarrollo
+### Problemas de Conexión
 
-## 📝 Estructura del Proyecto
+1. **Verifica la IP del PLC**: Asegúrate de que sea accesible desde la red
+2. **Configuración de Rack/Slot**: Verifica que coincida con la configuración del PLC
+3. **Firewall**: Asegúrate de que el puerto 102 (S7) esté abierto
+4. **Variables del PLC**: Verifica que las variables estén configuradas correctamente
 
-```
-frontend-plc/
-├── src/
-│   ├── app/
-│   │   ├── components/
-│   │   │   ├── PlcConnectionForm.tsx
-│   │   │   ├── PlcVariablesReader.tsx
-│   │   │   ├── PlcStatusMonitor.tsx
-│   │   │   └── PlcHealthCheck.tsx
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   └── ...
-├── package.json
-├── tailwind.config.js
-└── README.md
-```
+### Errores Comunes
+
+- **"No se pudo conectar al PLC"**: Verifica conectividad de red y configuración
+- **"Variables no encontradas"**: Verifica que las variables estén configuradas en el PLC
+- **"Error de validación"**: Verifica que los bloques de datos DB1 y DB51 existan
+
+## 📊 Monitoreo y Logs
+
+El sistema incluye:
+- Logs detallados de conexiones
+- Métricas de rendimiento
+- Monitoreo de errores
+- Estadísticas de uso
 
 ## 🤝 Contribución
 
 1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
+2. Crea una rama para tu feature
+3. Commit tus cambios
+4. Push a la rama
 5. Abre un Pull Request
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+Este proyecto está bajo la Licencia MIT.
 
 ## 📞 Soporte
 
-Si tienes preguntas o problemas:
-
-1. Revisa la documentación del backend
-2. Abre un issue en el repositorio
-3. Contacta al equipo de desarrollo
-
----
-
-**¡Disfruta probando tu PLC con esta interfaz moderna y funcional! 🚀**
+Para soporte técnico o preguntas:
+- Revisa la documentación del PLC S7-1200
+- Consulta los logs del sistema
+- Verifica la configuración de red

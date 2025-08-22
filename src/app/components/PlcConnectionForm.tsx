@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { plcService, PlcConnection } from '../../services/plcService';
 
 interface PlcConnectionFormProps {
-  onConnectionEstablished: (connectionInfo: {
-    ip: string;
-    rack: number;
-    slot: number;
-  }) => void;
+  onConnectionEstablished: (connectionInfo: PlcConnection) => void;
 }
 
 export default function PlcConnectionForm({ onConnectionEstablished }: PlcConnectionFormProps) {
@@ -18,20 +15,33 @@ export default function PlcConnectionForm({ onConnectionEstablished }: PlcConnec
   });
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsConnecting(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
-      // Aquí iría la lógica real de conexión al PLC
-      // Por ahora simulamos una conexión exitosa
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Validar la conexión al PLC
+      const validationResult = await plcService.validateConnection(formData);
       
-      onConnectionEstablished(formData);
+      if (validationResult.success) {
+        // Si la validación es exitosa, intentar conectar
+        const connectionResult = await plcService.connectToPlc(formData);
+        
+        if (connectionResult.success) {
+          setSuccessMessage('Conexión establecida exitosamente');
+          onConnectionEstablished(formData);
+        } else {
+          setError(connectionResult.message || 'Error al establecer la conexión');
+        }
+      } else {
+        setError(validationResult.message || 'Error en la validación de la conexión');
+      }
     } catch (err) {
-      setError('Error al conectar con el PLC. Verifica la IP y configuración.');
+      setError(err instanceof Error ? err.message : 'Error al conectar con el PLC. Verifica la IP y configuración.');
     } finally {
       setIsConnecting(false);
     }
@@ -48,7 +58,7 @@ export default function PlcConnectionForm({ onConnectionEstablished }: PlcConnec
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-        Configuración de Conexión PLC
+        Configuración de Conexión PLC S7-1200
       </h2>
       
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -108,6 +118,12 @@ export default function PlcConnectionForm({ onConnectionEstablished }: PlcConnec
           </div>
         )}
 
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 rounded-md p-3">
+            <p className="text-green-800 text-sm">{successMessage}</p>
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={isConnecting}
@@ -118,10 +134,14 @@ export default function PlcConnectionForm({ onConnectionEstablished }: PlcConnec
       </form>
 
       <div className="mt-6 p-4 bg-blue-50 rounded-md">
-        <h3 className="font-medium text-blue-800 mb-2">Información de Conexión</h3>
-        <p className="text-blue-700 text-sm">
+        <h3 className="font-medium text-blue-800 mb-2">Información de Conexión PLC S7-1200</h3>
+        <p className="text-blue-700 text-sm mb-2">
           Asegúrate de que el PLC esté encendido y accesible desde la red. 
           La dirección IP debe ser la misma que configuraste en el PLC.
+        </p>
+        <p className="text-blue-700 text-sm">
+          <strong>Variables disponibles:</strong> FechaHora, VB (Voltaje Batería), CB (Corriente Batería), 
+          SW (Solar Watt), ET (Energía Total), PT (Potencia Total), VS (Voltaje Solar), CS (Corriente Solar)
         </p>
       </div>
     </div>

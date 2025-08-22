@@ -5,18 +5,15 @@ import PlcConnectionForm from './components/PlcConnectionForm';
 import PlcVariablesReader from './components/PlcVariablesReader';
 import PlcStatusMonitor from './components/PlcStatusMonitor';
 import PlcHealthCheck from './components/PlcHealthCheck';
+import { PlcConnection } from '../services/plcService';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('connection');
-  const [connectionInfo, setConnectionInfo] = useState<{
-    ip: string;
-    rack: number;
-    slot: number;
-  } | null>(null);
+  const [connectionInfo, setConnectionInfo] = useState<PlcConnection | null>(null);
 
   const tabs = [
-    { id: 'connection', label: 'Conexión PLC', icon: '🔌' },
-    { id: 'variables', label: 'Lectura Variables', icon: '📊' },
+    { id: 'connection', label: 'Conexión PLC S7-1200', icon: '🔌' },
+    { id: 'variables', label: 'Variables PLC', icon: '📊' },
     { id: 'status', label: 'Estado Conexiones', icon: '📈' },
     { id: 'health', label: 'Estado Servicio', icon: '💚' },
   ];
@@ -27,10 +24,10 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            🏭 PLC Testing Interface
+            🏭 PLC S7-1200 Interface
           </h1>
           <p className="text-gray-600 text-lg">
-            Interfaz para probar la comunicación con PLCs Siemens
+            Interfaz para monitorear variables del PLC Siemens S7-1200
           </p>
         </div>
 
@@ -41,7 +38,7 @@ export default function Home() {
               <div className="flex items-center space-x-3">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-green-800 font-medium">
-                  Conectado a PLC: {connectionInfo.ip} (Rack: {connectionInfo.rack}, Slot: {connectionInfo.slot})
+                  Conectado a PLC S7-1200: {connectionInfo.ip} (Rack: {connectionInfo.rack}, Slot: {connectionInfo.slot})
                 </span>
               </div>
               <button
